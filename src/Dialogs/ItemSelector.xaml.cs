@@ -19,7 +19,7 @@ namespace MadsKristensen.FileNesting
             EnvDTE.ProjectItem currentItem = items.ElementAt(0);
 
             var siblings = ItemSelector.GetSiblings(currentItem);
-            _files = this.GetSource(siblings, items, new Dictionary<string, string>(), string.Empty);
+            _files = this.GetSelectedItmes(siblings, items, new Dictionary<string, string>(), string.Empty);
             ddlFiles.ItemsSource = _files.Keys;
             var index = GetMatchParentIndex(currentItem.Name, _files.Keys.ToArray());
             ddlFiles.SelectedIndex = index;
@@ -59,6 +59,24 @@ namespace MadsKristensen.FileNesting
                 }
 
                 GetSource(item.ProjectItems.Cast<EnvDTE.ProjectItem>(), selected, paths, indentation + "    ");
+            }
+
+            return paths;
+        }
+
+        private IDictionary<string, string> GetSelectedItmes(IEnumerable<EnvDTE.ProjectItem> parents, IEnumerable<EnvDTE.ProjectItem> selected, Dictionary<string, string> paths, string indentation)
+        {
+            foreach (EnvDTE.ProjectItem item in parents)
+            {
+                if (selected.Contains(item))
+                {
+                    string path = indentation + item.Name;
+
+                    if (!paths.ContainsKey(path))
+                        paths.Add(path, item.FileNames[0]);
+                }
+
+                GetSelectedItmes(item.ProjectItems.Cast<EnvDTE.ProjectItem>(), selected, paths, indentation + "    ");
             }
 
             return paths;
