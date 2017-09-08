@@ -21,6 +21,7 @@ namespace MadsKristensen.FileNesting
                 string path = item.FileNames[0];
                 ProjectItem parent = item.DTE.Solution.FindProjectItem(selector.SelectedFile);
                 if (parent == null) continue;
+                if (item.Name == parent.Name) continue;
 
                 bool mayNeedAttributeSet = item.ContainingProject.IsKind(ProjectTypes.DOTNET_Core, ProjectTypes.UNIVERSAL_APP);
                 if (mayNeedAttributeSet)
